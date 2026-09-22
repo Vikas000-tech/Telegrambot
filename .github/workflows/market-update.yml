@@ -1,0 +1,120 @@
+name: Market Update Message
+
+on:
+  schedule:
+    - cron: '5 4 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  send-market-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send market update to both bots
+        env:
+          BOT_TOKEN_OLD: ${{ secrets.BOT_TOKEN_OLD }}
+          BOT_TOKEN_NEW: ${{ secrets.BOT_TOKEN_NEW }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import re
+          import os
+          import time
+          import urllib.request
+          import urllib.parse
+
+          CHAT_ID = "8933321006"
+
+          # ---- CONFIG: agar kabhi koi source badalna ho, sirf yahan edit karo ----
+          INDEX_SYMBOLS = [
+              ("%5ENSEI", "Nifty 50"),
+              ("%5EBSESN", "Sensex"),
+              ("%5ENSEBANK", "Bank Nifty"),
+          ]
+          YAHOO_HOSTS = ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]
+          GLOBAL_RSS = [
+              "https://feeds.marketwatch.com/marketwatch/topstories/",
+              "https://www.investing.com/rss/news_25.rss",
+          ]
+          INDIAN_RSS = [
+              "https://www.moneycontrol.com/rss/marketreports.xml",
+              "https://www.livemint.com/rss/markets",
+          ]
+          HEADLINE_COUNT = 3
+          RETRIES = 2
+          TIMEOUT = 10
+
+          def fetch(url, retries=RETRIES):
+              last_err = None
+              for _ in range(retries + 1):
+                  try:
+                      req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                      with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                          return r.read().decode(errors="ignore")
+                  except Exception as e:
+                      last_err = e
+                      time.sleep(1)
+              raise last_err
+
+          def get_index(symbol, label):
+              for host in YAHOO_HOSTS:
+                  try:
+                      url = f"https://{host}/v8/finance/chart/{symbol}"
+                      data = json.loads(fetch(url, retries=1))
+                      meta = data["chart"]["result"][0]["meta"]
+                      price = meta["regularMarketPrice"]
+                      prev = meta.get("previousClose", meta.get("chartPreviousClose"))
+                      change = price - prev
+                      pct = (change / prev) * 100
+                      return f"{label}: {price:,.2f} ({change:+.2f}, {pct:+.2f}%)"
+                  except Exception:
+                      continue
+              return f"{label}: data unavailable"
+
+          def get_headlines(rss_urls, count=HEADLINE_COUNT):
+              for url in rss_urls:
+                  try:
+                      xml = fetch(url, retries=1)
+                      titles = re.findall(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", xml)
+                      titles = [t.strip() for t in titles if t.strip() and "RSS" not in t]
+                      if titles:
+                          return titles[:count]
+                  except Exception:
+                      continue
+              return []
+
+          def clean_token(raw):
+              m = re.search(r'[0-9]+:[A-Za-z0-9_-]+', raw)
+              return m.group(0) if m else raw.strip()
+
+          def send(token, msg):
+              url = f"https://api.telegram.org/bot{token}/sendMessage"
+              data = urllib.parse.urlencode({"chat_id": CHAT_ID, "text": msg}).encode()
+              req = urllib.request.Request(url, data=data)
+              try:
+                  urllib.request.urlopen(req, timeout=TIMEOUT)
+              except Exception as e:
+                  print("send failed:", e)
+
+          def main():
+              old_token = clean_token(os.environ["BOT_TOKEN_OLD"])
+              new_token = clean_token(os.environ["BOT_TOKEN_NEW"])
+
+              index_lines = [get_index(sym, label) for sym, label in INDEX_SYMBOLS]
+              global_headlines = get_headlines(GLOBAL_RSS)
+              indian_headlines = get_headlines(INDIAN_RSS)
+
+              lines = ["Market Update", ""] + index_lines + [""]
+              if global_headlines:
+                  lines.append("Global Markets:")
+                  lines += [f"- {h}" for h in global_headlines]
+                  lines.append("")
+              if indian_headlines:
+                  lines.append("Indian Markets:")
+                  lines += [f"- {h}" for h in indian_headlines]
+
+              msg = "\n".join(lines)
+              send(old_token, msg)
+              send(new_token, msg)
+
+          main()
+          EOF
