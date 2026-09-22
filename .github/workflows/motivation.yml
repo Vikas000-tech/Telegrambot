@@ -1,0 +1,36 @@
+name: Daily Motivation Message
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram Message to both bots
+        run: |
+          CHAT_ID="YAHA_APNI_CHAT_ID_DAALO"
+
+          MESSAGES=(
+            "Uth Vikas. Dard yaad rakh, wahi aaj tera fuel hai. Radha naam le, aur bina bahane ke lag ja. Pehle decide, fir change nahi."
+            "Aaj bhi wahi test hai — chalte candle pe kudna hai ya rukna hai. Ruk. Shri Radha ka naam le, mann shaant hoga, decision saaf aayega."
+            "Jo dard aaj mehsoos ho raha hai, wahi kal ki taaqat banega. Bas aaj bhaag mat, saamne khada reh. Radha naam jaap karte reh, surrender kar."
+            "Confirmation ka wait karna kamzori nahi, discipline hai. Aaj bhi apna checklist pura kar, ek bhi 'no' pe ruk ja. Naam jaap se dhyaan sthir rakh."
+            "Tu akela nahi lad raha — Radha naam tere saath hai. Bas aaj apne process pe bharosa rakh, result pe nahi. Pehle decide, fir change nahi."
+            "Har din ek mauka hai khud ko sudharne ka. Aaj scaling nahi, ek clean entry. Naam jaap kar, ego chhod, seekhta reh."
+            "Dard se mat bhaag, dard se seekh. Aaj bhi Radha naam ke saath shuru kar, aur apne hi rules follow kar — wahi asli jeet hai."
+          )
+
+          DAY=$(date +%j)
+          INDEX=$(( 10#$DAY % 7 ))
+          MSG="${MESSAGES[$INDEX]}"
+
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN_OLD }}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${MSG}"
+
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN_NEW }}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${MSG}"
