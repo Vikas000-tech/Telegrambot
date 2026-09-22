@@ -30,8 +30,8 @@ jobs:
           INDEX=$(( 10#$DAY % 10 ))
           MSG="${MESSAGES[$INDEX]}"
 
-          OLD_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_OLD }}" | tr -d '\r\n')
-          NEW_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_NEW }}" | tr -d '\r\n')
+          OLD_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_OLD }}" | grep -oE '[0-9]+:[A-Za-z0-9_-]+' | head -n1)
+          NEW_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_NEW }}" | grep -oE '[0-9]+:[A-Za-z0-9_-]+' | head -n1)
 
           curl -s -X POST "https://api.telegram.org/bot${OLD_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
