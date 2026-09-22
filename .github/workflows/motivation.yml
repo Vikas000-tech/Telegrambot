@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Send Telegram Message to both bots
         run: |
-          CHAT_ID="YAHA_APNI_CHAT_ID_DAALO"
+          CHAT_ID="8933321006"
 
           MESSAGES=(
             "Uth Vikas. Dard yaad rakh, wahi aaj tera fuel hai. Radha naam le, aur bina bahane ke lag ja. Pehle decide, fir change nahi."
