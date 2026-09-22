@@ -24,10 +24,20 @@ jobs:
             "Overtrading sabse bada dushman hai — din mein 1-2 best setup hi kaafi hain, baaki sab noise hai."
             "Jo aaj apne plan pe tika rahega, wahi kal apne aap pe garv karega. Pehle decide, fir change nahi."
             "Har din ek naya mauka hai khud ko behtar banane ka. Na kal ki galti dohraana hai, na kal ki jeet pe rukna hai — aaj bas aaj pe focus kar."
+            "Radhe Radhe se din shuru kar — jab mann bhatke, naam pakad le, wahi tera anchor hai. Aaj bina anchor ke ek bhi trade mat le."
+            "Concentration teri sabse badi galti rahi hai — ek stock mein 90% laga ke tu apna hi rule tod chuka hai. Aaj 20-25% ki seema yaad rakh, chahe setup kitna bhi accha lage."
+            "Spike dekh ke kudna asaan hai, confirmation ka wait karna kathin — lekin kathin raasta hi tera hai. Radha naam le, patience rakh."
+            "Ek hi stock mein long aur short dono — ye setup nahi, confusion hai. Aaj clarity rakh: ek direction, ek plan, ek entry."
+            "Jitni baar mann bhatke, utni baar naam jaap laut aa — trading mein bhi, jeevan mein bhi, yehi practice hai."
+            "7 trade ek ghante mein — wo din yaad hai? Aaj slow chal, kyunki slow hi sustainable hai."
+            "Har haar ke baad naya capital daalna solution nahi hai — pehle process theek kar, paisa baad mein aayega."
+            "Radhe ka naam le, ahankar chhod — market tujhse bada hai, ise jeetne ki nahi, iske saath chalne ki koshish kar."
+            "Aaj bhi wahi test hai: setup wait karega ya tu chase karega? Jawab tera character batayega."
+            "Chhoti jeet bhi jeet hai — agar aaj plan follow kiya, checklist pura kiya, to aaj win hai, result kuch bhi ho. Radhe Radhe."
           )
 
           DAY=$(date +%j)
-          INDEX=$(( 10#$DAY % 10 ))
+          INDEX=$(( 10#$DAY % ${#MESSAGES[@]} ))
           MSG="${MESSAGES[$INDEX]}"
 
           OLD_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_OLD }}" | grep -oE '[0-9]+:[A-Za-z0-9_-]+' | head -n1)
