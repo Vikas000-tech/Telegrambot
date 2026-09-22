@@ -14,23 +14,29 @@ jobs:
           CHAT_ID="8933321006"
 
           MESSAGES=(
-            "Uth Vikas. Dard yaad rakh, wahi aaj tera fuel hai. Radha naam le, aur bina bahane ke lag ja. Pehle decide, fir change nahi."
-            "Aaj bhi wahi test hai — chalte candle pe kudna hai ya rukna hai. Ruk. Shri Radha ka naam le, mann shaant hoga, decision saaf aayega."
-            "Jo dard aaj mehsoos ho raha hai, wahi kal ki taaqat banega. Bas aaj bhaag mat, saamne khada reh. Radha naam jaap karte reh, surrender kar."
-            "Confirmation ka wait karna kamzori nahi, discipline hai. Aaj bhi apna checklist pura kar, ek bhi 'no' pe ruk ja. Naam jaap se dhyaan sthir rakh."
-            "Tu akela nahi lad raha — Radha naam tere saath hai. Bas aaj apne process pe bharosa rakh, result pe nahi. Pehle decide, fir change nahi."
-            "Har din ek mauka hai khud ko sudharne ka. Aaj scaling nahi, ek clean entry. Naam jaap kar, ego chhod, seekhta reh."
-            "Dard se mat bhaag, dard se seekh. Aaj bhi Radha naam ke saath shuru kar, aur apne hi rules follow kar — wahi asli jeet hai."
+            "Bhai, aaj bhi wahi mauka hai — plan follow kar, emotion nahi. Trade se pehle apna checklist dekh, dil 'no' bole to seedha skip kar de. Naam jaap kar, mann shaant rakh, bina jaldi ke aaj ka din nikaal."
+            "Chalte candle pe kudna hai ya confirmation ka wait karna — yehi farak amateur aur professional trader mein hota hai. Aaj professional wale side pe reh."
+            "Dard hoga, loss bhi hoga — har trader ka yehi rasta hai. Process pe bharosa rakh, result pe nahi. Naam jaap kar, ego chhod, seekhta reh."
+            "Ek achi trade se zyada zaroori hai ek achi habit. Aaj bas apna rule follow kar, chahe result kuch bhi ho."
+            "Confirmation ka wait karna kamzori nahi, discipline hai. Jo aaj sabar rakhega, wahi kal munafa dekhega."
+            "Scaling mat kar, ek clean entry le. Jitna simple rakhega, utna hi control rahega apne upar."
+            "Naam jaap ke saath din shuru kar — mann sthir hoga, decision saaf aayega. Bina shaant mann ke koi bhi trade mat le."
+            "Overtrading sabse bada dushman hai — din mein 1-2 best setup hi kaafi hain, baaki sab noise hai."
+            "Jo aaj apne plan pe tika rahega, wahi kal apne aap pe garv karega. Pehle decide, fir change nahi."
+            "Har din ek naya mauka hai khud ko behtar banane ka. Na kal ki galti dohraana hai, na kal ki jeet pe rukna hai — aaj bas aaj pe focus kar."
           )
 
           DAY=$(date +%j)
-          INDEX=$(( 10#$DAY % 7 ))
+          INDEX=$(( 10#$DAY % 10 ))
           MSG="${MESSAGES[$INDEX]}"
 
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN_OLD }}/sendMessage" \
+          OLD_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_OLD }}" | tr -d '\r\n')
+          NEW_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_NEW }}" | tr -d '\r\n')
+
+          curl -s -X POST "https://api.telegram.org/bot${OLD_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
             --data-urlencode "text=${MSG}"
 
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN_NEW }}/sendMessage" \
+          curl -s -X POST "https://api.telegram.org/bot${NEW_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
             --data-urlencode "text=${MSG}"
