@@ -1,70 +1,336 @@
-name: Daily Motivation Message
+MESSAGES=(
+  "धृतराष्ट्र उवाच।
+धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।
+मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥ (गीता 1.1)
 
-on:
-  schedule:
-    - cron: '0 3 * * *'
-  workflow_dispatch:
+Dhritarashtra ne poocha — jab mere aur Pandu ke bête ladne ke liye Kurukshetra mein jama hue, tab kya hua Sanjay?
 
-jobs:
-  send-message:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send Telegram Message to both bots
-        run: |
-          CHAT_ID="8933321006"
+Anchor word: \"जिज्ञासा\" — sawal poochna hi samajhne ka pehla kadam hai."
 
-          MESSAGES=(
-            "Bhai, aaj bhi wahi mauka hai — plan follow kar, emotion nahi. Trade se pehle apna checklist dekh, dil 'no' bole to seedha skip kar de. Naam jaap kar, mann shaant rakh, bina jaldi ke aaj ka din nikaal."
-            "Chalte candle pe kudna hai ya confirmation ka wait karna — yehi farak amateur aur professional trader mein hota hai. Aaj professional wale side pe reh."
-            "Dard hoga, loss bhi hoga — har trader ka yehi rasta hai. Process pe bharosa rakh, result pe nahi. Naam jaap kar, ego chhod, seekhta reh."
-            "Ek achi trade se zyada zaroori hai ek achi habit. Aaj bas apna rule follow kar, chahe result kuch bhi ho."
-            "Confirmation ka wait karna kamzori nahi, discipline hai. Jo aaj sabar rakhega, wahi kal munafa dekhega."
-            "Scaling mat kar, ek clean entry le. Jitna simple rakhega, utna hi control rahega apne upar."
-            "Naam jaap ke saath din shuru kar — mann sthir hoga, decision saaf aayega. Bina shaant mann ke koi bhi trade mat le."
-            "Overtrading sabse bada dushman hai — din mein 1-2 best setup hi kaafi hain, baaki sab noise hai."
-            "Jo aaj apne plan pe tika rahega, wahi kal apne aap pe garv karega. Pehle decide, fir change nahi."
-            "Har din ek naya mauka hai khud ko behtar banane ka. Na kal ki galti dohraana hai, na kal ki jeet pe rukna hai — aaj bas aaj pe focus kar."
-            "Radhe Radhe se din shuru kar — jab mann bhatke, naam pakad le, wahi tera anchor hai. Aaj bina anchor ke ek bhi trade mat le."
-            "Concentration teri sabse badi galti rahi hai — ek stock mein 90% laga ke tu apna hi rule tod chuka hai. Aaj 20-25% ki seema yaad rakh, chahe setup kitna bhi accha lage."
-            "Spike dekh ke kudna asaan hai, confirmation ka wait karna kathin — lekin kathin raasta hi tera hai. Radha naam le, patience rakh."
-            "Ek hi stock mein long aur short dono — ye setup nahi, confusion hai. Aaj clarity rakh: ek direction, ek plan, ek entry."
-            "Jitni baar mann bhatke, utni baar naam jaap laut aa — trading mein bhi, jeevan mein bhi, yehi practice hai."
-            "7 trade ek ghante mein — wo din yaad hai? Aaj slow chal, kyunki slow hi sustainable hai."
-            "Har haar ke baad naya capital daalna solution nahi hai — pehle process theek kar, paisa baad mein aayega."
-            "Radhe ka naam le, ahankar chhod — market tujhse bada hai, ise jeetne ki nahi, iske saath chalne ki koshish kar."
-            "Aaj bhi wahi test hai: setup wait karega ya tu chase karega? Jawab tera character batayega."
-            "Chhoti jeet bhi jeet hai — agar aaj plan follow kiya, checklist pura kiya, to aaj win hai, result kuch bhi ho. Radhe Radhe."
-            "Arjuna bhi confuse tha, dara hua tha jung shuru hone se pehle — darr aana galat nahi, darr ke saamne kadam na uthana galat hai. Aaj apna confusion accept kar, lekin ruk mat."
-            "Karmanye vadhikaraste, ma phaleshu kadachana — tera haq sirf karm mein hai, result mein nahi. Aaj apna setup follow kar, result Krishna pe chhod de."
-            "Bina kaam kiye koi nahi reh sakta — sawaal ye nahi ki kaam karna hai ya nahi, sawaal ye hai ki kis niyat se karna hai. Aaj apna trade seva ki tarah kar, lalach ki tarah nahi."
-            "Jo apne karm mein hi tyaag dekh le, wahi asli gyani hai — bina fal ki chah ke kiya gaya kaam hi sabse shuddh hota hai."
-            "Sanyasi wo nahi jo kaam chhod de, sanyasi wo hai jo kaam karte hue bhi attach nahi hota. Trading chhodni nahi hai, bas result se chipakna chhodna hai."
-            "Apna mann hi apna sabse bada dost hai ya sabse bada dushman — jo apne mann ko jeet le, uske liye mann dost ban jaata hai. Naam jaap se roz thoda mann sadha."
-            "Hazaron mein koi ek hi asli siddhi ki taraf koshish karta hai — rare cheez asaan nahi hoti. Discipline bhi aisi hi rare cheez hai, isliye usse pakad ke rakh."
-            "Jo insaan jis bhi cheez ka roz smaran karta hai, wahi uski aadat ban jaati hai. Naam jaap roz kar, mann ki disha set hoti hai."
-            "Koi bhi Mujhe prem se ek patta, phool ya paani bhi arpan kare, Main use sweekar kar leta hoon — bhaav bada hota hai, size nahi. Chhota disciplined trade bhi, sahi niyat se liya, bada kaam hai."
-            "Jo bhi shreshtha aur sundar hai duniya mein, wo sab Meri hi jhalak hai. Apne kaam mein bhi excellence dhoondh, wahi bhakti hai."
-            "Arjuna ne Krishna ka vishwaroop dekha aur dar gaya, kyunki poori sachai ek saath dekhna aasan nahi. Market ki poori sachai bhi ek din mein nahi samajh aati — dheere dheere seekh."
-            "Jo apna mann poori tarah Mujh mein laga deta hai, wahi sabse pyara bhakt hai. Naam jaap tera sabse seedha raasta hai, usse mat chhod."
-            "Shareer ek kshetra hai, jo usse jaanta hai wo alag hai — khud ko sirf apne emotions samajh lega, wahi bhatkega. Apne emotions ko dekh, unmein kho mat."
-            "Sattva, Rajas aur Tamas — ye teen gunas har insaan ko bandhte hain. Jab trade lalach se aaye, samajh ja galat waqt hai."
-            "Ye sansar ek ulte ped jaisa hai — jo ismein bhi Mujhe dekh le, wahi asli samajhdar hai. Market ke utar-chadhav mein apna center mat khona."
-            "Nirbhayta, satya aur shaant swabhav divine gunas hain; ahankar, krodh aur lalach demoniac gunas hain. Trading mein bhi lalach aur ahankar hi sabse bada dushman hain."
-            "Jaisi jiski shraddha hoti hai, waisa hi wo ban jaata hai. Apne process mein shraddha rakh, wahi tujhe wahan le jayegi."
-            "Sarva-dharman parityajya mam-ekam sharanam vraja — sab chhod ke sirf Mujhme sharan le, Main tujhe har chinta se mukt kar dunga. Apna poora bharosa rakh — Radhe Radhe."
-          )
+  "सञ्जय उवाच।
+दृष्ट्वा तु पाण्डवानीकं व्यूढं दुर्योधनस्तदा।
+आचार्यमुपसङ्गम्य राजा वचनमब्रवीत्॥ (गीता 1.2)
 
-          DAY=$(date +%j)
-          INDEX=$(( 10#$DAY % ${#MESSAGES[@]} ))
-          MSG="${MESSAGES[$INDEX]}"
+Sanjay bataate hain — Pandavo ki sena taiyar dekh kar Duryodhan apne guru Drona ke paas gaya.
 
-          OLD_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_OLD }}" | grep -oE '[0-9]+:[A-Za-z0-9_-]+' | head -n1)
-          NEW_TOKEN=$(printf '%s' "${{ secrets.BOT_TOKEN_NEW }}" | grep -oE '[0-9]+:[A-Za-z0-9_-]+' | head -n1)
+Anchor word: \"अवलोकन\" — pehle dekho, phir bolo."
 
-          curl -s -X POST "https://api.telegram.org/bot${OLD_TOKEN}/sendMessage" \
-            --data-urlencode "chat_id=${CHAT_ID}" \
-            --data-urlencode "text=${MSG}"
+  "पश्यैतां पाण्डुपुत्राणामाचार्य महतीं चमूम्।
+व्यूढां द्रुपदपुत्रेण तव शिष्येण धीमता॥ (गीता 1.3)
 
-          curl -s -X POST "https://api.telegram.org/bot${NEW_TOKEN}/sendMessage" \
-            --data-urlencode "chat_id=${CHAT_ID}" \
-            --data-urlencode "text=${MSG}"
+Duryodhan bola — dekhiye, aapke hi shishya ne kitni badi sena khadi ki hai.
+
+Anchor word: \"तुलना\" — doosron se compare karna insaan ka swabhaav hai."
+
+  "अत्र शूरा महेष्वासा भीमार्जुनसमा युधि।
+युयुधानो विराटश्च द्रुपदश्च महारथः॥ (गीता 1.4)
+
+Duryodhan Pandav sena ke bade yodhaon ke naam gina raha hai — Bhima-Arjun jaise balshaali.
+
+Anchor word: \"सामर्थ्य\" — doosri taraf ki taakat pehchanna bhi samajhdari hai."
+
+  "धृष्टकेतुश्चेकितानः काशिराजश्च वीर्यवान्।
+पुरुजित्कुन्तिभोजश्च शैब्यश्च नरपुङ्गवः॥ (गीता 1.5)
+
+Aur bhi bade yodha yahan hain — Dhrishtaketu, Chekitan, balwan Kashiraj.
+
+Anchor word: \"विविधता\" — har taraf alag-alag tarah ki taakat hoti hai."
+
+  "युधामन्युश्च विक्रान्त उत्तमौजाश्च वीर्यवान्।
+सौभद्रो द्रौपदेयाश्च सर्व एव महारथाः॥ (गीता 1.6)
+
+Yudhamanyu, Uttamauja, Abhimanyu aur Draupadi ke bête bhi maharathi hain.
+
+Anchor word: \"सामूहिकता\" — akela nahi, poori team taiyar thi."
+
+  "अस्माकं तु विशिष्टा ये तान्निबोध द्विजोत्तम।
+नायका मम सैन्यस्य संज्ञार्थं तान्ब्रवीमि ते॥ (गीता 1.7)
+
+Duryodhan Drona ko apni taraf ke bhi mukhya senapatiyon ke naam batata hai.
+
+Anchor word: \"परिचय\" — apni team ko bhi pehchano."
+
+  "भवान्भीष्मश्च कर्णश्च कृपश्च समितिञ्जयः।
+अश्वत्थामा विकर्णश्च सौमदत्तिस्तथैव च॥ (गीता 1.8)
+
+Aap khud, Bhishma, Karna, Kripa, Ashwatthama jaise mahaan yodha mere saath hain.
+
+Anchor word: \"भरोसा\" — apni team pe bharosa rakhna zaroori hai."
+
+  "अन्ये च बहवः शूरा मदर्थे त्यक्तजीविताः।
+नानाशस्त्रप्रहरणाः सर्वे युद्धविशारदाः॥ (गीता 1.9)
+
+Aur bhi kai yodha hain jo mere liye jaan dene ko taiyar hain.
+
+Anchor word: \"समर्पण\" — kuch log poori tarah samarpit hote hain."
+
+  "अपर्याप्तं तदस्माकं बलं भीष्माभिरक्षितम्।
+पर्याप्तं त्विदमेतेषां बलं भीमाभिरक्षितम्॥ (गीता 1.10)
+
+Duryodhan kehta hai — hamari sena bahut badi hai, unki apni jagah taiyaar hai.
+
+Anchor word: \"आत्मविश्वास\" — apni taaqat pe yakeen, par ghamand nahi."
+
+  "अयनेषु च सर्वेषु यथाभागमवस्थिताः।
+भीष्ममेवाभिरक्षन्तु भवन्तः सर्व एव हि॥ (गीता 1.11)
+
+Sabko apni-apni jagah rehke Bhishma ki raksha karni hai.
+
+Anchor word: \"अनुशासन\" — apni position pe tike rehna hi discipline hai."
+
+  "तस्य सञ्जनयन्हर्षं कुरुवृद्धः पितामहः।
+सिंहनादं विनद्योच्चैः शङ्खं दध्मौ प्रतापवान्॥ (गीता 1.12)
+
+Bhishma pitamah ne zor se sinh-garjana ki aur shankh bajaya.
+
+Anchor word: \"उत्साह\" — badon ka hosla poori sena ka hosla badhata hai."
+
+  "ततः शङ्खाश्च भेर्यश्च पणवानकगोमुखाः।
+सहसैवाभ्यहन्यन्त स शब्दस्तुमुलोऽभवत्॥ (गीता 1.13)
+
+Fir sab taraf se shankh aur yudh-vaady ek saath baj uthe.
+
+Anchor word: \"शुरुआत\" — jab sab taiyar hote hain, shuruaat khud awaaz kar deti hai."
+
+  "ततः श्वेतैर्हयैर्युक्ते महति स्यन्दने स्थितौ।
+माधवः पाण्डवश्चैव दिव्यौ शङ्खौ प्रदध्मतुः॥ (गीता 1.14)
+
+Krishna aur Arjun ne apne divya shankh bajaye.
+
+Anchor word: \"साथ\" — Krishna hamesha Arjun ke saath rathi ban ke khade the."
+
+  "पाञ्चजन्यं हृषीकेशो देवदत्तं धनञ्जयः।
+पौण्ड्रं दध्मौ महाशङ्खं भीमकर्मा वृकोदरः॥ (गीता 1.15)
+
+Krishna ne Panchjanya, Arjun ne Devdutt, aur Bhima ne Paundra shankh bajaya.
+
+Anchor word: \"पहचान\" — har yodha ka apna shankh, apni pehchan."
+
+  "अनन्तविजयं राजा कुन्तीपुत्रो युधिष्ठिरः।
+नकुलः सहदेवश्च सुघोषमणिपुष्पकौ॥ (गीता 1.16)
+
+Yudhishthir ne Anantvijay, Nakul-Sahdev ne apne shankh bajaye.
+
+Anchor word: \"एकजुटता\" — sab apni jagah se ek saath jud rahe the."
+
+  "काश्यश्च परमेष्वासः शिखण्डी च महारथः।
+धृष्टद्युम्नो विराटश्च सात्यकिश्चापराजितः॥ (गीता 1.17)
+
+Kashiraj, Shikhandi, Dhrishtadyumna, Virat aur Satyaki bhi apna shankh bajate hain.
+
+Anchor word: \"तत्परता\" — sab taiyar the apni bhoomika nibhane ko."
+
+  "द्रुपदो द्रौपदेयाश्च सर्वशः पृथिवीपते।
+सौभद्रश्च महाबाहुः शङ्खान्दध्मुः पृथक्पृथक्॥ (गीता 1.18)
+
+Drupad, Draupadi ke bête aur Abhimanyu ne bhi apne-apne shankh bajaye.
+
+Anchor word: \"योगदान\" — chhota ho ya bada, har ek ka apna yogdaan tha."
+
+  "स घोषो धार्तराष्ट्राणां हृदयानि व्यदारयत्।
+नभश्च पृथिवीं चैव तुमुलोऽभ्यनुनादयन्॥ (गीता 1.19)
+
+Wo aawaaz itni tez thi ki dharti-akaash goonj uthe aur Kauravon ke dil kaanp gaye.
+
+Anchor word: \"प्रभाव\" — sahi taiyari ka asar saamne wale pe bhi padta hai."
+
+  "अथ व्यवस्थितान्दृष्ट्वा धार्तराष्ट्रान् कपिध्वजः।
+प्रवृत्ते शस्त्रसम्पाते धनुरुद्यम्य पाण्डवः।
+हृषीकेशं तदा वाक्यमिदमाह महीपते॥ (गीता 1.20)
+
+Yudh shuru hone hi wala tha, tabhi Arjun ne apna dhanush uthaya aur Krishna se kuch kaha.
+
+Anchor word: \"निर्णय-क्षण\" — asli pariksha ka waqt aa gaya."
+
+  "अर्जुन उवाच।
+सेनयोरुभयोर्मध्ये रथं स्थापय मेऽच्युत॥ (गीता 1.21)
+
+Arjun bola — Krishna, mera ratha dono senaon ke beech le chalo.
+
+Anchor word: \"स्पष्टता\" — pehle poori tasveer dekhni zaroori hai."
+
+  "यावदेतान्निरीक्षेऽहं योद्धुकामानवस्थितान्।
+कैर्मया सह योद्धव्यमस्मिन् रणसमुद्यमे॥ (गीता 1.22)
+
+Jab tak main dekh na loon ki kaun-kaun ladne aaya hai, tab tak tay nahi kar sakta.
+
+Anchor word: \"मूल्यांकन\" — faisla lene se pehle poori sthiti samajhna zaroori hai."
+
+  "योत्स्यमानानवेक्षेऽहं य एतेऽत्र समागताः।
+धार्तराष्ट्रस्य दुर्बुद्धेर्युद्धे प्रियचिकीर्षवः॥ (गीता 1.23)
+
+Main un sabko dekhna chahta hoon jo Duryodhan ke saath ladne aaye hain.
+
+Anchor word: \"जागरूकता\" — kis se saamna hai ye jaanna zaroori hai."
+
+  "सञ्जय उवाच।
+एवमुक्तो हृषीकेशो गुडाकेशेन भारत।
+सेनयोरुभयोर्मध्ये स्थापयित्वा रथोत्तमम्॥ (गीता 1.24)
+
+Krishna ne Arjun ki baat sunkar ratha ko dono senaon ke beech le jakar khada kar diya.
+
+Anchor word: \"सहयोग\" — Arjun ki baat sunkar Krishna ne turant sahyog diya."
+
+  "भीष्मद्रोणप्रमुखतः सर्वेषां च महीक्षिताम्।
+उवाच पार्थ पश्यैतान् समवेतान्कुरूनिति॥ (गीता 1.25)
+
+Krishna ne kaha — Arjun, dekh, ye sab Kuru vansh ke log yahan jama hain.
+
+Anchor word: \"सामना\" — jo saamne hai use pura dekhna padta hai."
+
+  "तत्रापश्यत्स्थितान्पार्थः पितॄनथ पितामहान्।
+आचार्यान्मातुलान्भ्रातॄन् पुत्रान्पौत्रान्सखींस्तथा॥ (गीता 1.26)
+
+Arjun ne wahan apne hi log dekhe — dada, guru, mama, bhai, bête, dost, dono taraf.
+
+Anchor word: \"अपनापन\" — saamne apne hi log hon to dil bhar aata hai."
+
+  "श्वशुरान्सुहृदश्चैव सेनयोरुभयोरपि।
+तान्समीक्ष्य स कौन्तेयः सर्वान्बन्धूनवस्थितान्।
+कृपया परयाविष्टो विषीदन्निदमब्रवीत्॥ (गीता 1.27)
+
+Sasur aur shubh-chintak bhi dono taraf khade the — ye dekh kar Arjun ka mann karuna se bhar gaya.
+
+Anchor word: \"करुणा\" — apnon ko dukh mein dekhna sabse mushkil hota hai."
+
+  "अर्जुन उवाच।
+दृष्ट्वेमं स्वजनं कृष्ण युयुत्सुं समुपस्थितम्॥ (गीता 1.28)
+
+Arjun bola — Krishna, apne hi logon ko ladne ke liye khada dekh kar mera mann bhar aaya hai.
+
+Anchor word: \"भावनात्मकता\" — bade faisle se pehle emotions uthna swabhavik hai."
+
+  "सीदन्ति मम गात्राणि मुखं च परिशुष्यति।
+वेपथुश्च शरीरे मे रोमहर्षश्च जायते॥ (गीता 1.29)
+
+Mera sharir kaanp raha hai, mooh sookh raha hai, romanch ho raha hai.
+
+Anchor word: \"व्याकुलता\" — bhaari pal mein sharir bhi react karta hai."
+
+  "गाण्डीवं स्रंसते हस्तात्त्वक्चैव परिदह्यते।
+न च शक्नोम्यवस्थातुं भ्रमतीव च मे मनः॥ (गीता 1.30)
+
+Haath se dhanush chhoot raha hai, khada hona mushkil ho raha hai, mann bhatak raha hai.
+
+Anchor word: \"अस्थिरता\" — bhaari dabaav mein control khona insaani hai."
+
+  "निमित्तानि च पश्यामि विपरीतानि केशव।
+न च श्रेयोऽनुपश्यामि हत्वा स्वजनमाहवे॥ (गीता 1.31)
+
+Mujhe apshakun bhi dikh rahe hain, aur apne hi logon ko maar kar kuch achha hone wala nahi lagta.
+
+Anchor word: \"आशंका\" — dil ka darr kabhi-kabhi sach bhi hota hai."
+
+  "न काङ्क्षे विजयं कृष्ण न च राज्यं सुखानि च।
+किं नो राज्येन गोविन्द किं भोगैर्जीवितेन वा॥ (गीता 1.32)
+
+Mujhe jeet nahi chahiye, na rajya, na sukh — inka kya fayda?
+
+Anchor word: \"वैराग्य\" — jis cheez ke liye ladna tha, wahi bekaar lag rahi hai."
+
+  "येषामर्थे काङ्क्षितं नो राज्यं भोगाः सुखानि च।
+त इमेऽवस्थिता युद्धे प्राणांस्त्यक्त्वा धनानि च॥ (गीता 1.33)
+
+Jinke liye hum rajya-sukh chahte the, wahi log apni jaan daanv pe laga kar saamne khade hain.
+
+Anchor word: \"विडंबना\" — jis maqsad ke liye ladna tha, wahi maqsad kho raha hai."
+
+  "आचार्याः पितरः पुत्रास्तथैव च पितामहाः।
+मातुलाः श्वशुराः पौत्राः श्यालाः सम्बन्धिनस्तथा॥ (गीता 1.34)
+
+Guru, pita, bête, dada, mama, sasur, pote — sab yahan apne hi log hain.
+
+Anchor word: \"रिश्ते\" — rishte hamesha result se bade hote hain."
+
+  "एतान्न हन्तुमिच्छामि घ्नतोऽपि मधुसूदन।
+अपि त्रैलोक्यराज्यस्य हेतोः किं नु महीकृते॥ (गीता 1.35)
+
+Ye mujhe maar bhi dein, tab bhi main inhe marna nahi chahta, chahe poori duniya mil jaye.
+
+Anchor word: \"अहिंसा\" — kisi bhi labh ke liye apnon ko chot nahi pahunchani chahiye."
+
+  "निहत्य धार्तराष्ट्रान्नः का प्रीतिः स्याज्जनार्दन।
+पापमेवाश्रयेदस्मान् हत्वैतानाततायिनः॥ (गीता 1.36)
+
+Inhe maar kar hume kya khushi milegi, Krishna? Ulta paap hi lagega.
+
+Anchor word: \"नैतिकता\" — sirf jeetna kaafi nahi, sahi-galat sochna bhi zaroori hai."
+
+  "तस्मान्नार्हा वयं हन्तुं धार्तराष्ट्रान्स्वबान्धवान्।
+स्वजनं हि कथं हत्वा सुखिनः स्याम माधव॥ (गीता 1.37)
+
+Apne hi bandhuon ko maar kar hum kabhi sukhi nahi rah sakte.
+
+Anchor word: \"सुख\" — galat raaste se mila sukh, sukh nahi hota."
+
+  "यद्यप्येते न पश्यन्ति लोभोपहतचेतसः।
+कुलक्षयकृतं दोषं मित्रद्रोहे च पातकम्॥ (गीता 1.38)
+
+Ye log lalach mein apni hi galti nahi dekh pa rahe.
+
+Anchor word: \"लोभ\" — lalach insaan ki soch andhi kar deta hai."
+
+  "कथं न ज्ञेयमस्माभिः पापादस्मान्निवर्तितुम्।
+कुलक्षयकृतं दोषं प्रपश्यद्भिर्जनार्दन॥ (गीता 1.39)
+
+Par hume to pata hai ki apna hi kul barbaad karna galat hai — hume iss paap se bachna chahiye.
+
+Anchor word: \"विवेक\" — sahi-galat ka gyaan hona hi vivek hai."
+
+  "कुलक्षये प्रणश्यन्ति कुलधर्माः सनातनाः।
+धर्मे नष्टे कुलं कृत्स्नमधर्मोऽभिभवत्युत॥ (गीता 1.40)
+
+Kul ke naash se purani parampara bhi khatam ho jaati hai, aur dharm nasht hone se poora parivar bhatak jaata hai.
+
+Anchor word: \"परंपरा\" — jad ukhadne se poori peedhi prabhavit hoti hai."
+
+  "अधर्माभिभवात्कृष्ण प्रदुष्यन्ति कुलस्त्रियः।
+स्त्रीषु दुष्टासु वार्ष्णेय जायते वर्णसङ्करः॥ (गीता 1.41)
+
+Arjun kehta hai ki adharm badhne se poore samaj mein galat prabhaav failta hai.
+
+Anchor word: \"प्रभाव\" — ek galat kadam ka asar poore samaj pe padta hai."
+
+  "सङ्करो नरकायैव कुलघ्नानां कुलस्य च।
+पतन्ति पितरो ह्येषां लुप्तपिण्डोदकक्रियाः॥ (गीता 1.42)
+
+Isse pitro aur poore kul ka apman hota hai, aisa Arjun maanta hai.
+
+Anchor word: \"सम्मान\" — parampara aur poorvajon ka sammaan zaroori samjha jaata tha."
+
+  "दोषैरेतैः कुलघ्नानां वर्णसङ्करकारकैः।
+उत्साद्यन्ते जातिधर्माः कुलधर्माश्च शाश्वताः॥ (गीता 1.43)
+
+Kul-naashak logon ke ye dosh purane samaji-dharm dono ko mita dete hain.
+
+Anchor word: \"मूल्य\" — purane mulya bachana us waqt zaroori samjha jaata tha."
+
+  "उत्सन्नकुलधर्माणां मनुष्याणां जनार्दन।
+नरके नियतं वासो भवतीत्यनुशुश्रुम॥ (गीता 1.44)
+
+Aise logon ko narak mein jagah milti hai, aisa hamne suna hai — Arjun kehta hai.
+
+Anchor word: \"परिणाम\" — har kaam ka result hota hai, aisa vishwas tha."
+
+  "अहो बत महत्पापं कर्तुं व्यवसिता वयम्।
+यद्राज्यसुखलोभेन हन्तुं स्वजनमुद्यताः॥ (गीता 1.45)
+
+Hai! Hum kitna bada paap karne ja rahe hain — sirf rajya-sukh ke lalach mein apne hi logon ko marne ko taiyar hain.
+
+Anchor word: \"पश्चाताप\" — galti se pehle hi pachtaava mehsoos hona ek sanket hai."
+
+  "यदि मामप्रतीकारमशस्त्रं शस्त्रपाणयः।
+धार्तराष्ट्रा रणे हन्युस्तन्मे क्षेमतरं भवेत्॥ (गीता 1.46)
+
+Agar ye nihatthe Arjun ko maar bhi dein, tab bhi wo behtar samjhega, bajaye inhe khud marne ke.
+
+Anchor word: \"त्याग\" — kabhi-kabhi haar jeetne se behtar lagti hai."
+
+  "सञ्जय उवाच।
+एवमुक्त्वार्जुनः सङ्ख्ये रथोपस्थ उपाविशत्।
+विसृज्य सशरं चापं शोकसंविग्नमानसः॥ (गीता 1.47)
+
+Sanjay kehte hain — itna kehkar Arjun apna dhanush-baan chhod kar ratha mein baith gaya, uska mann shok se bhar gaya tha.
+
+Anchor word: \"अवसाद\" — bade faisle se pehle poori tarah tootना bhi ek padaav hai — yahin se Gita ka asli gyaan shuru hota hai."
+)
