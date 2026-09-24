@@ -19,6 +19,7 @@ jobs:
           import re
           import os
           import time
+          import html
           import urllib.request
           import urllib.parse
 
@@ -42,6 +43,13 @@ jobs:
           HEADLINE_COUNT = 3
           RETRIES = 2
           TIMEOUT = 10
+
+          # RSS feed ke apne naam/junk titles jo headline nahi hain - inhe hata do
+          JUNK_TITLES = {
+              "top stories", "latest news", "home", "logo", "rss",
+              "marketwatch", "investing.com", "moneycontrol", "livemint",
+              "market reports", "markets",
+          }
 
           def fetch(url, retries=RETRIES):
               last_err = None
@@ -74,10 +82,28 @@ jobs:
               for url in rss_urls:
                   try:
                       xml = fetch(url, retries=1)
-                      titles = re.findall(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", xml)
-                      titles = [t.strip() for t in titles if t.strip() and "RSS" not in t]
-                      if titles:
-                          return titles[:count]
+                      raw_titles = re.findall(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", xml)
+                      # RSS feed ka pehla <title> hamesha channel/feed ka naam hota hai, kisi khabar ka nahi - use skip karo
+                      raw_titles = raw_titles[1:]
+
+                      cleaned = []
+                      seen = set()
+                      for t in raw_titles:
+                          t = html.unescape(t).strip()
+                          if not t:
+                              continue
+                          if t.lower() in JUNK_TITLES:
+                              continue
+                          if len(t) < 8:
+                              continue
+                          key = t.lower()
+                          if key in seen:
+                              continue
+                          seen.add(key)
+                          cleaned.append(t)
+
+                      if cleaned:
+                          return cleaned[:count]
                   except Exception:
                       continue
               return []
