@@ -52,6 +52,20 @@ jobs:
               "market reports", "markets",
           }
 
+          # Kuch RSS feeds mein khud unki apni galti se "&" chinha gayab ho jaata hai aur
+          # sirf "#39;" jaisa numeric code bacha reh jaata hai - inhe manually theek karo
+          STRAY_ENTITY_MAP = {
+              "#39;": "'", "#38;": "&", "#34;": '"', "#60;": "<", "#62;": ">",
+              "#8216;": "'", "#8217;": "'", "#8220;": '"', "#8221;": '"',
+              "#8211;": "-", "#8212;": "-", "#x2019;": "'", "#x2018;": "'",
+          }
+
+          def clean_title_text(t):
+              t = html.unescape(t)
+              for pattern, repl in STRAY_ENTITY_MAP.items():
+                  t = t.replace(pattern, repl)
+              return t.strip()
+
           def fetch(url, retries=RETRIES):
               last_err = None
               for _ in range(retries + 1):
@@ -96,7 +110,7 @@ jobs:
                           t_el = item.find("title")
                           if t_el is None or not t_el.text:
                               continue
-                          t = html.unescape(t_el.text).strip()
+                          t = clean_title_text(t_el.text)
                           if not t:
                               continue
                           if t.lower() in JUNK_TITLES:
