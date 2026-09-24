@@ -22,6 +22,7 @@ jobs:
           import html
           import urllib.request
           import urllib.parse
+          import xml.etree.ElementTree as ET
 
           CHAT_ID = "8933321006"
 
@@ -81,15 +82,21 @@ jobs:
           def get_headlines(rss_urls, count=HEADLINE_COUNT):
               for url in rss_urls:
                   try:
-                      xml = fetch(url, retries=1)
-                      raw_titles = re.findall(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", xml)
-                      # RSS feed ka pehla <title> hamesha channel/feed ka naam hota hai, kisi khabar ka nahi - use skip karo
-                      raw_titles = raw_titles[1:]
+                      xml_text = fetch(url, retries=1)
+                      # XML declaration hata do warna Python ka parser str pe encoding dekh kar error deta hai
+                      xml_text = re.sub(r'^\s*<\?xml[^>]*\?>', '', xml_text)
+                      root = ET.fromstring(xml_text)
+                      # Sirf <item> ke andar wale <title> lo - <channel> aur <image> ke apne
+                      # title (jaise "X Logo", "X - Top Stories") yahan kabhi aate hi nahi
+                      items = root.findall(".//item")
 
                       cleaned = []
                       seen = set()
-                      for t in raw_titles:
-                          t = html.unescape(t).strip()
+                      for item in items:
+                          t_el = item.find("title")
+                          if t_el is None or not t_el.text:
+                              continue
+                          t = html.unescape(t_el.text).strip()
                           if not t:
                               continue
                           if t.lower() in JUNK_TITLES:
@@ -101,9 +108,11 @@ jobs:
                               continue
                           seen.add(key)
                           cleaned.append(t)
+                          if len(cleaned) >= count:
+                              break
 
                       if cleaned:
-                          return cleaned[:count]
+                          return cleaned
                   except Exception:
                       continue
               return []
