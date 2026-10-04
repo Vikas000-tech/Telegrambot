@@ -1,47 +1,55 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+cd "$(dirname "$0")/../.."
 
 python3 << 'PYEOF'
-import json, os, re, time, urllib.request, urllib.parse
+import datetime
+import json
+import os
+from pathlib import Path
+import re
+import urllib.error
+import urllib.parse
+import urllib.request
 
 CHAT_ID = "8933321006"
-EPOCH_DATE = "2024-01-01"
-
-# Shlokas.json raw URL from the same repo
-SHLOKAS_URL = "https://raw.githubusercontent.com/Vikas000-tech/Telegrambot/main/data/shlokas.json"
-
-# Day rotation
-import datetime
-epoch = datetime.date(2024, 1, 1)
-today = datetime.date.today()
-days_elapsed = (today - epoch).days
-
-# Fetch shloka data
-req = urllib.request.Request(SHLOKAS_URL, headers={"User-Agent": "Mozilla/5.0"})
-with urllib.request.urlopen(req, timeout=15) as r:
-    shlokas = json.loads(r.read().decode())
-
-index = days_elapsed % len(shlokas)
+today = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5, minutes=30))).date()
+shlokas = json.loads(Path("data/shlokas.json").read_text(encoding="utf-8"))
+if not isinstance(shlokas, list) or not shlokas:
+    raise SystemExit("Message data must be a nonempty list.")
+required = ("राधे राधे", "आज का उपदेश: गीता", "हिंदी अर्थ:", "एंकर शब्द:", "सरल मतलब:", "तेरे लिए व्यावहारिक:", "आज का ठोस अभ्यास:")
+if not all(isinstance(msg, str) and len(msg) <= 4096 and all(part in msg for part in required) for msg in shlokas):
+    raise SystemExit("Message data must contain complete Gita teachings.")
+index = (today - datetime.date(2024, 1, 1)).days % len(shlokas)
 msg = shlokas[index]
+verse = re.search(r"आज का उपदेश: गीता ([0-9]+\.[0-9]+)", msg).group(1)
+print(f"Selected Gita {verse}; date={today}; source=checked-out data/shlokas.json", flush=True)
 
-# Clean token
-def clean_token(raw):
-    m = re.search(r'[0-9]+:[A-Za-z0-9_-]+', raw)
-    return m.group(0) if m else raw.strip()
-
-old_token = clean_token(os.environ["BOT_TOKEN_OLD"])
-new_token = clean_token(os.environ["BOT_TOKEN_NEW"])
-
-# Send to both bots
-def send(token, text):
-    url = f"https://api.telegram.org/bot{token}/sendMessage"
-    data = urllib.parse.urlencode({"chat_id": CHAT_ID, "text": text}).encode()
+def send(label):
+    raw = os.environ.get(label, "")
+    match = re.search(r"[0-9]+:[A-Za-z0-9_-]+", raw)
+    if not match:
+        print(f"{label}: missing or invalid bot token")
+        return False
+    token = match.group(0)
+    data = urllib.parse.urlencode({"chat_id": CHAT_ID, "text": msg}).encode()
+    request = urllib.request.Request(f"https://api.telegram.org/bot{token}/sendMessage", data=data)
     try:
-        urllib.request.urlopen(urllib.request.Request(url, data=data), timeout=15)
-        print(f"Sent to bot {token[:10]}...")
-    except Exception as e:
-        print(f"Failed: {e}")
+        with urllib.request.urlopen(request, timeout=20) as response:
+            result = json.load(response)
+        delivered = result.get("result", {})
+        if result.get("ok") is not True or delivered.get("text") != msg or str(delivered.get("chat", {}).get("id")) != CHAT_ID:
+            print(f"{label}: Telegram did not confirm the expected message and destination")
+            return False
+        print(f"{label}: confirmed Gita {verse}; message_id={delivered.get('message_id')}")
+        return True
+    except urllib.error.HTTPError as exc:
+        print(f"{label}: Telegram HTTP error {exc.code}")
+    except Exception as exc:
+        print(f"{label}: delivery failed ({type(exc).__name__})")
+    return False
 
-send(old_token, msg)
-send(new_token, msg)
+results = [send(label) for label in ("BOT_TOKEN_OLD", "BOT_TOKEN_NEW")]
+if not all(results):
+    raise SystemExit("One or more Telegram deliveries failed.")
 PYEOF
