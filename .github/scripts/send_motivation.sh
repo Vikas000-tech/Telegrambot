@@ -15,15 +15,22 @@ import urllib.request
 CHAT_ID = "8933321006"
 today = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5, minutes=30))).date()
 shlokas = json.loads(Path("data/shlokas.json").read_text(encoding="utf-8"))
-if not isinstance(shlokas, list) or not shlokas:
-    raise SystemExit("Message data must be a nonempty list.")
+if not isinstance(shlokas, list) or len(shlokas) != 120:
+    raise SystemExit("Message data must contain exactly 120 teachings.")
 required = ("राधे राधे", "आज का उपदेश: गीता", "हिंदी अर्थ:", "एंकर शब्द:", "सरल मतलब:", "तेरे लिए व्यावहारिक:", "आज का ठोस अभ्यास:")
 if not all(isinstance(msg, str) and len(msg) <= 4096 and all(part in msg for part in required) for msg in shlokas):
     raise SystemExit("Message data must contain complete Gita teachings.")
-index = (today - datetime.date(2024, 1, 1)).days % len(shlokas)
+verse_refs = [re.search(r"आज का उपदेश: गीता ([0-9]+\.[0-9]+)", item) for item in shlokas]
+if not all(verse_refs) or len({ref.group(1) for ref in verse_refs}) != 120:
+    raise SystemExit("Each of the 120 teachings must use a different Gita verse.")
+start_date = datetime.date(2026, 10, 4)
+elapsed_days = (today - start_date).days
+if elapsed_days < 0:
+    raise SystemExit("The 120-day teaching series has not started yet.")
+index = elapsed_days % len(shlokas)
 msg = shlokas[index]
 verse = re.search(r"आज का उपदेश: गीता ([0-9]+\.[0-9]+)", msg).group(1)
-print(f"Selected Gita {verse}; date={today}; source=checked-out data/shlokas.json", flush=True)
+print(f"Selected Gita {verse}; date={today}; day={index + 1}/120; source=checked-out data/shlokas.json", flush=True)
 
 def send(label):
     raw = os.environ.get(label, "")
