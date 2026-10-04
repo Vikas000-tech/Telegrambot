@@ -1,14 +1,10 @@
 name: Daily Motivation Message
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/motivation.yml']
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
 jobs:
   send-message:
-    if: github.event_name != 'push' || github.event.head_commit.message == 'Verify corrected Gita delivery once'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
