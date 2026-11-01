@@ -2,7 +2,7 @@ name: Market Update Message
 
 on:
   schedule:
-    - cron: '5 4 * * 1-5'
+    - cron: '17 4 * * 1-5'  # 9:47 AM IST (Mon-Fri)
   workflow_dispatch:
 
 jobs:
@@ -42,6 +42,7 @@ jobs:
               "https://www.livemint.com/rss/markets",
           ]
           HEADLINE_COUNT = 3
+          TARGET_BOT = "vikaspainfulbot"  # sirf isi bot pe msg jayega
           RETRIES = 2
           TIMEOUT = 10
 
@@ -135,6 +136,13 @@ jobs:
               m = re.search(r'[0-9]+:[A-Za-z0-9_-]+', raw)
               return m.group(0) if m else raw.strip()
 
+          def bot_username(token):
+              try:
+                  data = json.loads(fetch(f"https://api.telegram.org/bot{token}/getMe", retries=1))
+                  return (data.get("result", {}).get("username") or "").lower()
+              except Exception:
+                  return ""
+
           def send(token, msg):
               url = f"https://api.telegram.org/bot{token}/sendMessage"
               data = urllib.parse.urlencode({"chat_id": CHAT_ID, "text": msg}).encode()
@@ -162,8 +170,13 @@ jobs:
                   lines += [f"- {h}" for h in indian_headlines]
 
               msg = "\n".join(lines)
-              send(old_token, msg)
-              send(new_token, msg)
+              tokens = [old_token, new_token]
+              targets = [t for t in tokens if bot_username(t) == TARGET_BOT]
+              if not targets:
+                  print("target bot not found, sending to all bots")
+                  targets = tokens
+              for t in targets:
+                  send(t, msg)
 
           main()
           EOF
