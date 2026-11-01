@@ -56,7 +56,24 @@ def send(label):
         print(f"{label}: delivery failed ({type(exc).__name__})")
     return False
 
-results = [send(label) for label in ("BOT_TOKEN_OLD", "BOT_TOKEN_NEW")]
+TARGET_BOT = "vikaspainfulbot"  # sirf isi bot pe msg jayega
+
+def bot_username(label):
+    match = re.search(r"[0-9]+:[A-Za-z0-9_-]+", os.environ.get(label, ""))
+    if not match:
+        return ""
+    try:
+        with urllib.request.urlopen(f"https://api.telegram.org/bot{match.group(0)}/getMe", timeout=20) as response:
+            return (json.load(response).get("result", {}).get("username") or "").lower()
+    except Exception:
+        return ""
+
+labels = ("BOT_TOKEN_OLD", "BOT_TOKEN_NEW")
+targets = [label for label in labels if bot_username(label) == TARGET_BOT]
+if not targets:
+    print(f"{TARGET_BOT} not found in secrets; sending to all bots")
+    targets = list(labels)
+results = [send(label) for label in targets]
 if not all(results):
     raise SystemExit("One or more Telegram deliveries failed.")
 PYEOF
